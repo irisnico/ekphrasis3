@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bine ați venit!</title>
+    <style>
+        body {
+            background-color: lightblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            width: 300px;
+            height: 300px;
+        }
+
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            background-color: lightgray;
+        }
+
+        .cell:hover {
+          cursor: pointer;
+        }
+
+        .message {
+          margin-top: 20px;
+          font-size: 24px;
+          text-align:center; 
+        }
+    </style>
+</head>
+<body>
+    <div class="board"></div>
+
+    <div class="message">
+      <p id="winMessage"></p>
+      <p id="tagMessage"></p>
+    </div>
+
+    <script>
+      const board = document.querySelector('.board');
+      const cells = [];
+
+      let currentPlayer = '👔';
+      let gameOver = false;
+
+      const winMessage = document.getElementById('winMessage');
+      const tagMessage = document.getElementById('tagMessage');
+
+      // Create the game board
+      for (let i = 0; i < 9; i++) {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+
+          cell.addEventListener('click', () => {
+              if (!gameOver && !cell.textContent) {
+                  cell.textContent = currentPlayer;
+
+                  if (checkWin()) {
+                      winMessage.textContent = "YOU ARE fanTIEstic!";
+                      tagMessage.textContent = "Dă-ne tag pe Instagram stories cu câștigătorul!";
+                      gameOver = true;
+                  } else if (checkDraw()) {
+                      winMessage.textContent = "It's a draw!";
+                      gameOver = true;
+                  } else {
+                      currentPlayer = currentPlayer === '👔' ? '🔴' : '👔';
+                  }
+              }
+          });
+
+          cells.push(cell);
+          board.appendChild(cell);
+      }
+
+      // Check for a win
+      function checkWin() {
+          const winningCombinations = [
+              [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+              [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+              [0, 4, 8], [2, 4, 6] // Diagonals
+          ];
+
+          for (const combination of winningCombinations) {
+              const [a, b, c] = combination;
+
+              if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                  return true;
+              }
+          }
+
+          return false;
+      }
+
+      // Check for a draw
+      function checkDraw() {
+          return [...cells].every(cell => cell.textContent);
+      }
+    </script>
+</body>
+</html>
